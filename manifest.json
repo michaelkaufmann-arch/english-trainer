@@ -1,0 +1,9 @@
+{
+  "name": "English Trainer",
+  "short_name": "English Trainer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f6f4",
+  "theme_color": "#f6f6f4",
+  "icons": [{"src":"icon.png","sizes":"1536x1536","type":"image/png","purpose":"any maskable"}]
+}
