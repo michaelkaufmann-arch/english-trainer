@@ -60,7 +60,7 @@ footer{color:#8b8984;font-size:11px;line-height:1.55;padding:14px 3px}
 <header>
 <div><div class="eyebrow">English · Daily Practice</div>
 <h1>Vokabeltrainer</h1>
-<div class="sub">1.500 Grundwörter · intelligent wiederholen · offlinefähig</div></div>
+<div class="sub">Deutsch → Englisch · 1.500 Grundwörter · intelligent wiederholen</div></div>
 <div class="logo">A</div>
 </header>
 
@@ -79,10 +79,10 @@ footer{color:#8b8984;font-size:11px;line-height:1.55;padding:14px 3px}
 
 <div class="card">
 <div class="top"><span class="badge" id="counter">1 / 20</span><span class="badge" id="cat">Grundwortschatz</span></div>
-<div class="word" id="word" title="Antippen zum Vorlesen">—<small>🔊 Antippen zum Anhören</small></div>
-<button class="speak" id="speak">🔊 Aussprache</button>
+<div class="word" id="word" title="Deutsches Wort">—<small>🇩🇪</small></div>
 <div class="answer hidden" id="answer">—</div>
-<button class="primary" id="show">Antwort anzeigen</button>
+<button class="primary" id="show">Englische Antwort anzeigen</button>
+<button class="speak" id="speak" style="display:none">🔊 Englische Aussprache</button>
 <div class="actions" id="actions" style="display:none">
 <button class="wrong" id="wrong">✕ Falsch</button>
 <button class="right" id="right">✓ Richtig</button>
@@ -116,7 +116,7 @@ footer{color:#8b8984;font-size:11px;line-height:1.55;padding:14px 3px}
 </details>
 
 <footer>
-Die Aussprache verwendet die Sprachsynthese deines iPhone/iPad. Tippe direkt auf das englische Wort oder auf „Aussprache“.
+Die Aussprache verwendet die Sprachsynthese deines iPhone/iPad. Nutze dafür den Button „Aussprache“.
 Falsche Wörter werden mit einem zufällig variierenden kurzen Abstand erneut fällig. Richtige Wörter erhalten zunehmend längere Abstände.
 </footer>
 </div>
@@ -230,10 +230,11 @@ function render(){
   if(pos>=session.length){finish();return}
   const v=session[pos], s=state[v.id];
   document.getElementById("counter").textContent=(pos+1)+" / "+session.length;
-  document.getElementById("word").childNodes[0].nodeValue=v.en;
-  document.getElementById("answer").textContent=v.de;
+  document.getElementById("word").childNodes[0].nodeValue=v.de;
+  document.getElementById("answer").textContent=v.en;
   document.getElementById("answer").classList.add("hidden");
   document.getElementById("show").style.display="";
+  document.getElementById("speak").style.display="none";
   document.getElementById("actions").style.display="none";
   document.getElementById("bar").style.width=(pos/session.length*100)+"%";
   updateStats();
@@ -241,6 +242,7 @@ function render(){
 function reveal(){
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("show").style.display="none";
+  document.getElementById("speak").style.display="block";
   document.getElementById("actions").style.display="grid";
 }
 function rate(ok){
@@ -278,6 +280,7 @@ function finish(){
   document.getElementById("answer").textContent="Starte eine neue Runde.";
   document.getElementById("answer").classList.remove("hidden");
   document.getElementById("show").style.display="none";
+  document.getElementById("speak").style.display="block";
   document.getElementById("actions").style.display="none";
   document.getElementById("counter").textContent="✓ Fertig";
   updateStats();
@@ -308,7 +311,7 @@ async function start(){
       "<b>Vokabeln konnten nicht geladen werden.</b><p>Bitte das Gerät mit dem Internet verbinden und die Datei erneut öffnen. Fehler: "+e.message+"</p>";
   }
 }
-document.getElementById("word").onclick=speak;
+document.getElementById("word").onclick=()=>{};
 document.getElementById("speak").onclick=speak;
 document.getElementById("show").onclick=reveal;
 document.getElementById("wrong").onclick=()=>rate(false);
