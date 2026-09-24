@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6f6f4">
+<meta name="apple-mobile-web-app-title" content="English Trainer">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>English Trainer · A1–B2</title>
+<style>
+:root{
+  --bg:#f6f6f4;--surface:rgba(255,255,255,.94);--ink:#171717;--muted:#777;
+  --line:#e5e3de;--amber:#D9A441;--amber2:#e9ad39;--good:#e8f3ec;--bad:#f7e9e7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:linear-gradient(180deg,#fafaf8 0%,#f1f0ed 100%);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:auto;padding:22px 18px 38px}
+header{display:flex;justify-content:space-between;align-items:flex-end;padding:8px 2px 18px}
+.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:#8a8883;font-weight:700}
+h1{font-size:30px;line-height:1.05;margin:6px 0 0;letter-spacing:-.035em}
+.sub{font-size:13px;color:var(--muted);margin-top:7px}
+.logo{width:43px;height:43px;border-radius:14px;background:#181818;color:#fff;display:grid;place-items:center;font-size:20px;box-shadow:0 8px 20px #0002}
+
+.levelBar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.levelBtn{padding:11px 8px;border:1px solid #ddd9d1;background:#fff;border-radius:15px;color:#666;font:inherit;box-shadow:0 2px 8px #00000006}
+.levelBtn.active{background:var(--amber);border-color:var(--amber);color:#171717;font-weight:700}
+.levelNote{text-align:center;color:#888;font-size:12px;margin:8px 0 15px}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:15px 13px;box-shadow:0 6px 20px #00000008}
+.stat b{display:block;font-size:25px;letter-spacing:-.03em}.stat span{font-size:12px;color:var(--muted)}
+.progress{height:5px;background:#e1dfda;border-radius:99px;overflow:hidden;margin:4px 2px 14px}
+.bar{height:100%;background:#181818;width:0;transition:width .25s}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:24px 18px;box-shadow:0 14px 40px #0000000d}
+.top{display:flex;justify-content:space-between;gap:8px}
+.badge{font-size:11px;color:#777;background:#f1f0ec;border:1px solid var(--line);padding:7px 10px;border-radius:99px}
+.word{font-size:48px;line-height:1.08;font-weight:750;text-align:center;margin:54px 0 25px;letter-spacing:-.045em}
+.primary{background:linear-gradient(180deg,var(--amber2),var(--amber));color:#fff;width:100%;margin-top:6px;font-weight:650;box-shadow:0 7px 18px #d9a44133}
+button{font:inherit;border:0;border-radius:16px;padding:14px;cursor:pointer;transition:transform .08s ease,opacity .15s}
+button:active{transform:scale(.98)}
+.secondary{background:#e9e8e4;color:#222;width:100%;margin-top:12px}
+
+.answer{margin-top:14px;padding:8px 14px;border-radius:20px;background:#f7f6f2}
+.hidden{display:none}
+.meaning{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:13px 2px;border-bottom:1px solid #e8e6e1}
+.meaning:last-child{border-bottom:0}
+.en{font-size:25px;font-weight:720;letter-spacing:-.02em}
+.dehint{font-size:13px;color:#777;margin-top:3px;line-height:1.35}
+.level{font-size:10px;font-weight:750;padding:6px 8px;border-radius:999px;background:#ebe9e4;color:#555;white-space:nowrap}
+.miniSpeak{border:1px solid #dedbd4;background:#fff;border-radius:50%;width:36px;height:36px;padding:0;font-size:16px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.wrong{background:var(--bad);color:#7a2b25}.right{background:var(--good);color:#205b38}
+
+.audioCard{
+  display:flex;align-items:center;gap:16px;margin-top:12px;padding:13px 16px;
+  background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:24px;
+  box-shadow:0 10px 28px #0000000a;cursor:pointer;
+}
+.audioIcon{
+  width:56px;height:56px;border-radius:50%;display:grid;place-items:center;
+  background:#fff7e7;color:#d99f31;font-size:26px;flex:0 0 auto;
+}
+.audioText{min-width:0;flex:1}
+.audioTitle{font-size:16px;font-weight:700}
+.audioSub{font-size:13px;color:#888;margin-top:4px}
+.chevron{font-size:28px;color:#aaa;font-weight:300}
+
+.details{margin-top:12px;background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:20px;padding:12px 14px}
+summary{cursor:pointer;font-weight:650;font-size:14px}
+label{display:block;margin:12px 0 5px;font-size:13px;font-weight:650}
+input{width:100%;padding:11px;border:1px solid #d8d6d1;border-radius:11px;font:inherit;background:#fff}
+.notice{font-size:12px;line-height:1.5;color:#777;margin-top:12px}
+footer{color:#8a8883;font-size:11px;line-height:1.55;padding:14px 3px}
+#loading{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 10px 30px #00000008}
+
+@media(min-width:700px){
+  .word{font-size:62px}.card{padding:30px 28px}
+}
+@media(max-width:520px){
+  .levelBar{gap:5px}.levelBtn{font-size:13px;padding:10px 4px}
+  .word{font-size:40px}.audioSub{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">English · Daily Practice</div>
+    <h1>Vokabeltrainer</h1>
+    <div class="sub">Mehrere Bedeutungen · A1–B2 · intelligentes Wiederholen</div>
+  </div>
+  <div class="logo">A</div>
+</header>
+
+<div class="levelBar" id="levels">
+  <button class="levelBtn active" data-level="ALL">Alle</button>
+  <button class="levelBtn" data-level="A1">A1</button>
+  <button class="levelBtn" data-level="A2">A2</button>
+  <button class="levelBtn" data-level="B1">B1</button>
+  <button class="levelBtn" data-level="B2">B2</button>
+</div>
+<div class="levelNote" id="levelNote">Alle Bedeutungen A1–B2</div>
+
+<div id="loading" class="card">
+  <b>Vokabeln werden vorbereitet …</b>
+  <p>Die Vokabeln und CEFR-Informationen werden einmalig geladen und danach auf deinem Gerät gespeichert.</p>
+</div>
+
+<div id="app" style="display:none">
+  <div class="stats">
+    <div class="stat"><b id="known">0</b><span>beherrscht</span></div>
+    <div class="stat"><b id="due">0</b><span>fällig</span></div>
+    <div class="stat"><b id="today">0</b><span>heute gelernt</span></div>
+  </div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+
+  <div class="card">
+    <div class="top">
+      <span class="badge" id="counter">1 / 20</span>
+      <span class="badge" id="cat">A1–B2</span>
+    </div>
+    <div class="word" id="word">—</div>
+    <div class="answer hidden" id="answer"></div>
+    <button class="primary" id="show">Englische Antwort anzeigen</button>
+    <div class="actions" id="actions" style="display:none">
+      <button class="wrong" id="wrong">✕ Falsch</button>
+      <button class="right" id="right">✓ Richtig</button>
+    </div>
+  </div>
+
+  <button class="secondary" id="newSession">Neue Runde</button>
+
+  <div class="audioCard" id="audioCard" role="button" tabindex="0" aria-label="Englische Aussprache">
+    <div class="audioIcon">🔊</div>
+    <div class="audioText">
+      <div class="audioTitle">Englische Aussprache</div>
+      <div class="audioSub">🇬🇧 British English · Automatisch (Frauenstimme bevorzugen)</div>
+    </div>
+    <div class="chevron">›</div>
+  </div>
+
+  <div class="details">
+    <details>
+      <summary>⚙️ Einstellungen & Fortschritt</summary>
+      <label for="sessionSize">Wörter pro Runde</label>
+      <input id="sessionSize" type="number" min="5" max="50" value="20">
+      <button class="secondary" id="reset">Lernfortschritt zurücksetzen</button>
+      <div class="notice">Der Lernfortschritt wird unabhängig von der App-Version lokal gespeichert und bei Updates automatisch übernommen.</div>
+    </details>
+  </div>
+
+  <footer>
+    Eine Lernkarte kann mehrere englische Bedeutungen enthalten. Unterschiedliche Bedeutungen können unterschiedlichen CEFR-Niveaus zugeordnet sein.
+    Der Lernstand wird über stabile Wort-IDs gespeichert, nicht über die Position in der Wortliste.
+  </footer>
+</div>
+</div>
+
+<script>
+const SOURCE="https://raw.githubusercontent.com/giniedp/media_education/master/drehbuch/doc/resources/vocabulary/more/Vokabellisten_Englisch/Deutsch%20-%20Englisch%20Grundwortschatz%20%5B1681%5D.csv";
+const LEVEL_SOURCE="https://raw.githubusercontent.com/GliteTech/research-ace-cefr/main/tasks/t0010_download_efllex_lexicon/assets/dataset/efllex-2018/files/EFLLex.tsv";
+const VOCAB_KEY="en_vocab_cefr_v3";
+const LEVEL_KEY="en_cefr_map_v3";
+const STATE_KEY="english_trainer_progress_v3";
+const OLD_STATE_KEY="en_vocab_state_cefr_v2";
+const OLD_STATE_KEY_1500="en_vocab_state_v1";
+const OLD_VOCAB_KEY_1500="en_vocab_1500_v1";
+let vocab=[],levelMap={},state={},session=[],pos=0,selectedLevel="ALL";
+
+function stableId(de,en){
+  const s=(de.trim().toLowerCase()+"|"+en.trim().toLowerCase());
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+  return "w_"+(h>>>0).toString(16);
+}
+
+function decodeVocabularyBuffer(buf){
+  const u8=new Uint8Array(buf);
+  let text=new TextDecoder("utf-8",{fatal:false}).decode(u8);
+  const bad=(text.match(/\uFFFD/g)||[]).length;
+  if(bad>0){
+    try{
+      const cp=new TextDecoder("windows-1252",{fatal:false}).decode(u8);
+      if((cp.match(/\uFFFD/g)||[]).length<bad) text=cp;
+    }catch(e){}
+  }
+  return text;
+}
+
+function parseCSV(text){
+  return text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((line,i)=>{
+    const k=line.indexOf(";");
+    if(k<0)return null;
+    const de=line.slice(0,k).trim();
+    const en=line.slice(k+1).trim();
+    if(!de||!en)return null;
+    const answers=[...new Set(en.split(/\s*,\s*/).map(x=>x.trim()).filter(Boolean))];
+    if(!answers.length)return null;
+    return {legacyId:i,de,answers:answers.map(x=>({en:x,level:null}))};
+  }).filter(Boolean).map(v=>({
+    id:stableId(v.de,v.answers[0].en),
+    de:v.de,
+    answers:v.answers,
+    legacyId:v.legacyId
+  }));
+}
+
+function parseLevels(text){
+  const rows=text.split(/\r?\n/).filter(Boolean);
+  if(!rows.length)return {};
+  const h=rows[0].split("\t");
+  const wi=h.indexOf("word");
+  const cols=[h.indexOf("level_freq@a1"),h.indexOf("level_freq@a2"),h.indexOf("level_freq@b1"),h.indexOf("level_freq@b2")];
+  const sums={};
+  for(let i=1;i<rows.length;i++){
+    const p=rows[i].split("\t"),w=(p[wi]||"").toLowerCase().trim();
+    if(!w)continue;
+    const a=cols.map(c=>c>=0?parseFloat(p[c]||"0")||0:0);
+    if(!sums[w])sums[w]=[0,0,0,0];
+    for(let j=0;j<4;j++)sums[w][j]+=a[j];
+  }
+  const out={};
+  for(const w in sums){
+    const a=sums[w],m=Math.max(...a);
+    if(m>0)out[w]=["A1","A2","B1","B2"][a.indexOf(m)];
+  }
+  return out;
+}
+
+function enrich(){
+  vocab.forEach(v=>v.answers.forEach(a=>{
+    const mapped=levelMap[a.en.toLowerCase().trim()];
+    a.level=mapped||"B1";
+  }));
+}
+
+function levelRank(l){return ({A1:1,A2:2,B1:3,B2:4}[l]||3)}
+function answerVisible(a){
+  return selectedLevel==="ALL" || levelRank(a.level)<=levelRank(selectedLevel);
+}
+function eligible(){
+  return vocab.filter(v=>v.answers.some(answerVisible));
+}
+
+function migrateOldState(){
+  if(Object.keys(state).length) return;
+  const candidates=[
+    {key:OLD_STATE_KEY, vocabKey:VOCAB_KEY},
+    {key:OLD_STATE_KEY_1500, vocabKey:OLD_VOCAB_KEY_1500}
+  ];
+  for(const c of candidates){
+    try{
+      const raw=localStorage.getItem(c.key);
+      if(!raw)continue;
+      const oldState=JSON.parse(raw);
+      const oldVocabRaw=localStorage.getItem(c.vocabKey);
+      if(!oldVocabRaw)continue;
+      const oldVocab=JSON.parse(oldVocabRaw);
+      oldVocab.forEach((ov,i)=>{
+        const s=oldState[ov.id!=null?ov.id:i];
+        if(!s)return;
+        const de=ov.de||"";
+        let en=ov.en;
+        if(!en && Array.isArray(ov.answers)&&ov.answers[0]) en=ov.answers[0].en;
+        if(!de||!en)return;
+        const id=stableId(de,en);
+        const existing=state[id];
+        if(!existing || (s.last||0)>(existing.last||0)){
+          state[id]={seen:s.seen||0,streak:s.streak||0,interval:s.interval||0,due:s.due||0,last:s.last||0};
+        }
+      });
+    }catch(e){}
+  }
+}
+
+function save(){
+  localStorage.setItem(STATE_KEY,JSON.stringify(state));
+  localStorage.setItem(STATE_KEY+"_backup",JSON.stringify({savedAt:Date.now(),state}));
+}
+function loadState(){
+  try{state=JSON.parse(localStorage.getItem(STATE_KEY)||"{}")}catch(e){state={}}
+  migrateOldState();
+}
+function initState(){
+  vocab.forEach(v=>{
+    if(!state[v.id])state[v.id]={seen:0,streak:0,interval:0,due:0,last:0};
+  });
+  save();
+}
+function rand(a,b){return a+Math.random()*(b-a)}
+function dueCards(){const n=Date.now();return eligible().filter(v=>state[v.id].due<=n)}
+
+function pickCard(used){
+  let pool=eligible().filter(v=>!used.has(v.id)&&state[v.id].due<=Date.now());
+  if(pool.length){
+    pool.sort((a,b)=>state[a.id].due-state[b.id].due);
+    return pool[Math.floor(Math.random()*Math.min(8,pool.length))];
+  }
+  pool=eligible().filter(v=>!used.has(v.id)&&state[v.id].seen===0);
+  if(pool.length)return pool[Math.floor(Math.random()*pool.length)];
+  pool=eligible().filter(v=>!used.has(v.id));
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function makeSession(){
+  const n=Math.max(5,Math.min(50,parseInt(document.getElementById("sessionSize").value)||20));
+  session=[];const used=new Set();
+  while(session.length<n&&used.size<eligible().length){
+    const v=pickCard(used);if(!v)break;used.add(v.id);session.push(v);
+  }
+  pos=0;render();
+}
+
+function availableBritishVoices(){
+  return speechSynthesis.getVoices().filter(v=>(v.lang||"").toLowerCase().startsWith("en-gb"));
+}
+function chooseVoice(){
+  const vs=availableBritishVoices();
+  const femaleWords=/female|frau|samantha|serena|kate|moira|victoria|susan|hazel|libby|sonia|emily/;
+  return vs.find(v=>femaleWords.test((v.name||"").toLowerCase()))||vs[0]||null;
+}
+function speakText(text){
+  if(!text)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  const v=chooseVoice();
+  u.voice=v||null;
+  u.lang=v?.lang||"en-GB";
+  u.rate=.82;u.pitch=.96;
+  speechSynthesis.speak(u);
+}
+function speak(){
+  const v=session[pos];
+  if(v)speakText(v.answers.filter(answerVisible).map(a=>a.en).join(", "));
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
+function meaningHint(de,en){
+  const d=de.toLowerCase(),x=en.toLowerCase();
+  if(d==="tragen"){
+    if(x==="carry")return"etwas mitnehmen / tragen";
+    if(x==="wear")return"Kleidung am Körper tragen";
+    if(x==="bear")return"eine Last oder Verantwortung tragen";
+  }
+  if(d==="bank"){
+    if(x==="bank")return"Geldinstitut";
+  }
+  return"";
+}
+
+function render(){
+  if(pos>=session.length){finish();return}
+  const v=session[pos];
+  document.getElementById("counter").textContent=(pos+1)+" / "+session.length;
+  document.getElementById("word").textContent=v.de;
+  document.getElementById("cat").textContent=selectedLevel==="ALL"?"A1–B2":selectedLevel;
+  const note=selectedLevel==="ALL"?"Alle Bedeutungen A1–B2":selectedLevel+" und darunter";
+  document.getElementById("levelNote").textContent=note;
+
+  const a=document.getElementById("answer");
+  a.innerHTML=v.answers.filter(answerVisible).map(x=>{
+    const hint=meaningHint(v.de,x.en);
+    return `<div class="meaning">
+      <div><div class="en">${esc(x.en)}</div>${hint?`<div class="dehint">${esc(hint)}</div>`:""}</div>
+      <span class="level">${esc(x.level)}</span>
+      <button class="miniSpeak" data-speak="${esc(x.en)}" aria-label="Aussprache">🔊</button>
+    </div>`;
+  }).join("");
+  a.classList.add("hidden");
+  a.querySelectorAll(".miniSpeak").forEach(b=>b.onclick=()=>speakText(b.getAttribute("data-speak")));
+  document.getElementById("show").style.display="";
+  document.getElementById("actions").style.display="none";
+  document.getElementById("bar").style.width=(pos/session.length*100)+"%";
+  updateStats();
+}
+
+function reveal(){
+  document.getElementById("answer").classList.remove("hidden");
+  document.getElementById("show").style.display="none";
+  document.getElementById("actions").style.display="grid";
+}
+function rate(ok){
+  const v=session[pos],s=state[v.id],now=Date.now();
+  s.seen++;s.last=now;
+  if(ok){
+    s.streak++;
+    const ints=[1,3,7,14,30,60,120,240],base=ints[Math.min(s.streak-1,ints.length-1)];
+    s.interval=Math.max(1,Math.round(base*rand(.85,1.15)*10)/10);
+    s.due=now+s.interval*86400000;
+  }else{
+    s.streak=0;s.interval=0;s.due=now+rand(10,60)*60000;
+  }
+  save();pos++;render();
+}
+function updateStats(){
+  const d=dueCards().length;let known=0,today=0;
+  vocab.forEach(v=>{
+    const s=state[v.id];
+    if(s.streak>=4)known++;
+    if(s.last&&new Date(s.last).toDateString()===new Date().toDateString())today++;
+  });
+  document.getElementById("known").textContent=known;
+  document.getElementById("due").textContent=d;
+  document.getElementById("today").textContent=today;
+}
+function finish(){
+  document.getElementById("bar").style.width="100%";
+  document.getElementById("word").textContent="Runde geschafft!";
+  document.getElementById("answer").innerHTML="<div style='padding:18px;text-align:center;color:#777'>Starte eine neue Runde.</div>";
+  document.getElementById("answer").classList.remove("hidden");
+  document.getElementById("show").style.display="none";
+  document.getElementById("actions").style.display="none";
+  document.getElementById("counter").textContent="✓ Fertig";
+  updateStats();
+}
+function resetAll(){
+  if(confirm("Wirklich den gesamten Lernfortschritt löschen?")){
+    state={};initState();makeSession();
+  }
+}
+
+async function fetchText(url){
+  const r=await fetch(url,{cache:"no-store"});
+  if(!r.ok)throw new Error("Quelle nicht erreichbar");
+  return r;
+}
+
+async function start(){
+  loadState();
+  try{
+    const cached=localStorage.getItem(VOCAB_KEY);
+    if(cached)vocab=JSON.parse(cached);
+    if(!vocab.length){
+      const r=await fetchText(SOURCE);
+      vocab=parseCSV(await r.arrayBuffer());
+      localStorage.setItem(VOCAB_KEY,JSON.stringify(vocab));
+    }
+
+    let lm=localStorage.getItem(LEVEL_KEY);
+    if(lm)levelMap=JSON.parse(lm);
+    if(!Object.keys(levelMap).length){
+      try{
+        const r=await fetchText(LEVEL_SOURCE);
+        if(r.ok){
+          levelMap=parseLevels(await r.text());
+          localStorage.setItem(LEVEL_KEY,JSON.stringify(levelMap));
+        }
+      }catch(e){}
+    }
+
+    enrich();
+    migrateOldState();
+    initState();
+
+    document.getElementById("loading").style.display="none";
+    document.getElementById("app").style.display="";
+    makeSession();
+  }catch(e){
+    document.getElementById("loading").innerHTML="<b>Vokabeln konnten nicht geladen werden.</b><p>Bitte Internetverbindung aktivieren und die App erneut öffnen.</p>";
+  }
+}
+
+document.querySelectorAll(".levelBtn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".levelBtn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");selectedLevel=b.dataset.level;makeSession();
+});
+document.getElementById("show").onclick=reveal;
+document.getElementById("wrong").onclick=()=>rate(false);
+document.getElementById("right").onclick=()=>rate(true);
+document.getElementById("newSession").onclick=makeSession;
+document.getElementById("reset").onclick=resetAll;
+document.getElementById("audioCard").onclick=speak;
+document.getElementById("audioCard").onkeydown=e=>{if(e.key==="Enter"||e.key===" ")speak()};
+speechSynthesis.onvoiceschanged=()=>chooseVoice();
+start();
+</script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
